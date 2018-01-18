@@ -9,10 +9,10 @@ def write_result_to_json(d, path):
     for v_id in d :
         this_vid_proposals = []
         v_dist = d[v_id]
-        for i in v_dist:
+        for v_list in v_dist:
             proposal = {
-                        'score': v_dist[i],
-                        'segment': i,
+                        'score': v_list[1],
+                        'segment': v_list[0],
                        }
             this_vid_proposals += [proposal]
 
@@ -37,12 +37,9 @@ def result_process(in_d, file_name):
             index += 1
             if (prob < 0.5):
                 # interval is more than one frame
-                if (start != end):
+                if (start != end and start + 1 != end):
                     # the wonderful interval should be [start, end - 1]
                     one_video_dict[(start, end - 1)] = seg_sum / (end - start) 
-                # interval is only one frame
-                elif (seg_sum != 0.0):
-                    one_video_dict[(start, end)] = seg_sum
                 # clean seg_sum and record new start
                 seg_sum = 0.0
                 start = index
@@ -53,20 +50,18 @@ def result_process(in_d, file_name):
             last_prob = prob
         # tail frames are all wonderful frames
         if (last_prob > 0.5):
-            if (start != end):
+            if (start != end and start + 1 != end):
                 one_video_dict[(start, end - 1)] = seg_sum / (end - start)
-            else:
-                one_video_dict[(start, end)] = seg_sum
+        one_video_dict = sorted(one_video_dict.items(), lambda d1, d2: cmp(d1[0][0], d2[0][0]))
         res_dict[v_id] = one_video_dict
-    # print(res_dict)
     write_result_to_json(res_dict, file_name)
     
 
 # only for test
 # if __name__=="__main__":
-#     aarr = np.random.random(size=1)
+#     aarr = np.random.random(size=50)
 #     barr = np.random.random(size=4)
-#     carr = np.random.random(size=2)
+#     carr = np.random.random(size=9)
 #     darr = np.random.random(size=7)
 #     d = {'a': aarr, 'b': barr,
 #           'c': carr, 'd': darr}
