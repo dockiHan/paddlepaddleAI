@@ -187,8 +187,8 @@ class LstmClassify(object):
         self.__parameters = paddle.parameters.create(self.__cost)
         # Increment learning
         if increment and os.path.isfile(self.__init_model):
-            with open(self.__init_model, "r") as f:
-                self.__parameters = paddle.parameters.Parameters.from_tar(f)
+            with open(self.__init_model, "r") as file:
+                self.__parameters.from_tar(file)
         optimizer = paddle.optimizer.Adam()
         self.__trainer = paddle.trainer.SGD(cost=self.__cost, parameters=self.__parameters, 
             update_equation=optimizer)

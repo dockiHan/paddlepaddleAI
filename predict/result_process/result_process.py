@@ -58,13 +58,20 @@ def result_process(in_d, file_name):
     
 
 # only for test
-# if __name__=="__main__":
-#     aarr = np.random.random(size=50)
-#     barr = np.random.random(size=4)
-#     carr = np.random.random(size=9)
-#     darr = np.random.random(size=7)
-#     d = {'a': aarr, 'b': barr,
-#           'c': carr, 'd': darr}
-#     print(d)
-#     file_name = "/home/furson/test/test.json"
-#     result_process(d, file_name)
+"""
+if __name__=="__main__":
+    file_path = "/home/kesci/work/predict_result.json"
+    with open(file_path, "r") as f:
+        json_str = json.load(f)
+    file_name = "/home/kesci/work/validation.json"
+    result_process(json_str, file_name)
+    aarr = np.random.random(size=50)
+    barr = np.random.random(size=4)
+    carr = np.random.random(size=9)
+    darr = np.random.random(size=7)
+    d = {'a': aarr, 'b': barr,
+          'c': carr, 'd': darr}
+    print(d)
+    file_name = "/home/furson/test/test.json"
+    result_process(d, file_name)
+"""

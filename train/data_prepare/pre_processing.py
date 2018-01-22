@@ -10,25 +10,26 @@ def load_json(file):
         data = json.load(json_file)
         return data
 
-def pre_processing(id):
-    json_data= load_json("/home/kesci/work/Broad/INFO/meta.json")
-    database=json_data['database']
-    len_image=0
+def pro_processing(id):
+    json_data = load_json("/home/docki/work/video/meta.json")
+    database = json_data['database']
+    len_image = 0
     for video_name in database.keys():
         if (video_name == id):
-            video_info=database[video_name]
-            video_subset=video_info["subset"]
+            video_info = database[video_name]
+            video_subset = video_info["subset"]
             try:
-                with open("/mnt/BROAD-datasets/video/"+video_subset+"/"+str(video_name)+".pkl",'rb') as f:
-                    img_fea=cPickle.load(f)
-                    len_image=len(img_fea)
+                with open("/home/docki/work/video/"+video_subset+"/"+str(video_name)+".pkl",'rb') as f:
+                    img_fea = cPickle.load(f)
+                    len_image = len(img_fea)
+                    f.close()
             except:
                 print "Not found!"
                 return
             
             # array init
             labelArr = np.zeros([len_image])
-            segment_info=video_info['annotations']
+            segment_info = video_info['annotations']
             
             # add seg flag
             for seg_info in segment_info:
@@ -43,6 +44,6 @@ def pre_processing(id):
     return labelArr
 
 def getLabelArray(id):
-    labelArray = pre_processing(id) 
+    return pro_processing(id)
     # np.set_printoptions(threshold='nan')
     # print labelArray
