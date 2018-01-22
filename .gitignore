@@ -1,3 +1,4 @@
 #Python
 *.pyc
 *.so
+*.swp

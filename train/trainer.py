@@ -45,7 +45,7 @@ def trainer():
     mix_hide_lr = 6e-3/batch_size
     lstm_lr = 6e-3/batch_size
     drop_out = 0.5 
-    train_pass_num = 200
+    train_pass_num = 2000 
     model_path = "/home/docki/work/video/lstm_model.tar"
     
     # Initialize paddle trainer
@@ -65,43 +65,47 @@ def trainer():
     # Read data from file
     base_path = "/home/docki/work/video/training"
     file_list = get_file_list(base_path)
-    file_index = 10
+    file_index = 0
     file_batch = 10
-    filename = file_list[file_index]
-    fileID = filename.split(".")[0]
-    filepath = os.path.join(base_path, filename)
-    normalize_fea = read_from_file(filepath)
-    label = getLabelArray(fileID).astype(int)
-    print("File number: {}. file: {}".format(file_index+1, filename))
-    iteration = 1
-    for filename in file_list[file_index+1: file_index+file_batch]:
-        print("File number: {}. file: {}".format(file_index+1+iteration, filename))
-        iteration += 1
+    while file_index < len(file_list):
+        filename = file_list[file_index]
         fileID = filename.split(".")[0]
         filepath = os.path.join(base_path, filename)
-        tmp_normalize_fea = read_from_file(filepath)
-        normalize_fea = np.concatenate((normalize_fea, tmp_normalize_fea), axis=0)
-        tmp_label = getLabelArray(fileID).astype(int)
-        label = np.concatenate((label, tmp_label), axis=0)
-    train_set_num = normalize_fea.shape[0] - time_step
-    print(normalize_fea.shape)
-    print(label.shape)
-    # Prepare train data
-    train_x, train_y = prepare_train_data(normalize_fea=normalize_fea, 
-                                          label=label, 
-                                          train_set_num=train_set_num, 
-                                          time_step=time_step, 
-                                          batch_size=batch_size, 
-                                          input_size=input_size)
-    # Training
-    increment = True
-    init_model = model_path
-    lstm.lstm_train(train_set_num, train_x, train_y, model_path, init_model, 
-                    increment, 10, train_pass_num, 0.3371)
-    last_saved_cost = lstm.get_last_saved_cost()
-    print("*" * 66)
-    print("Last saved cost: {}".format(last_saved_cost))
-    print("*" * 66)
+        normalize_fea = read_from_file(filepath)
+        label = getLabelArray(fileID).astype(int)
+        print("File number: {}. file: {}".format(file_index+1, filename))
+        iteration = 1
+        for filename in file_list[file_index+1: file_index+file_batch]:
+            print("File number: {}. file: {}".format(file_index+1+iteration, filename))
+            iteration += 1
+            fileID = filename.split(".")[0]
+            filepath = os.path.join(base_path, filename)
+            tmp_normalize_fea = read_from_file(filepath)
+            normalize_fea = np.concatenate((normalize_fea, tmp_normalize_fea), axis=0)
+            tmp_label = getLabelArray(fileID).astype(int)
+            label = np.concatenate((label, tmp_label), axis=0)
+        train_set_num = normalize_fea.shape[0] - time_step
+        print(normalize_fea.shape)
+        print(label.shape)
+        # Prepare train data
+        train_x, train_y = prepare_train_data(normalize_fea=normalize_fea, 
+                                              label=label, 
+                                              train_set_num=train_set_num, 
+                                              time_step=time_step, 
+                                              batch_size=batch_size, 
+                                              input_size=input_size)
+        # Training
+        increment = (True if file_index == 0 else False)
+        last_saved_cost = 10000.0
+        if file_index > 0:
+            last_saved_cost = lstm.get_last_saved_cost()
+        init_model = model_path
+        lstm.lstm_train(train_set_num, train_x, train_y, model_path, init_model, 
+                        increment, 10, train_pass_num, last_saved_cost)
+        print("*" * 66)
+        print("Last saved cost: {}".format(last_saved_cost))
+        print("*" * 66)
+        file_index += file_batch
         
 if __name__ == "__main__":
     trainer()
