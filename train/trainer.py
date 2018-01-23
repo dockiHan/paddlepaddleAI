@@ -42,10 +42,10 @@ def trainer():
     input_size = 2048
     output_size = 2
     lstm_depth = 5
-    mix_hide_lr = 6e-3/batch_size
-    lstm_lr = 6e-3/batch_size
+    mix_hide_lr = 9e-3/batch_size
+    lstm_lr = 9e-3/batch_size
     drop_out = 0.5 
-    train_pass_num = 2000 
+    train_pass_num = 3000 
     model_path = "/home/docki/work/video/lstm_model.tar"
     
     # Initialize paddle trainer
@@ -66,7 +66,7 @@ def trainer():
     base_path = "/home/docki/work/video/training"
     file_list = get_file_list(base_path)
     file_index = 0
-    file_batch = 10
+    file_batch = 8
     while file_index < len(file_list):
         filename = file_list[file_index]
         fileID = filename.split(".")[0]
@@ -95,7 +95,7 @@ def trainer():
                                               batch_size=batch_size, 
                                               input_size=input_size)
         # Training
-        increment = (True if file_index == 0 else False)
+        increment = (False if file_index == 0 else True)
         last_saved_cost = 10000.0
         if file_index > 0:
             last_saved_cost = lstm.get_last_saved_cost()
